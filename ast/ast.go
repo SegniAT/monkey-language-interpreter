@@ -54,7 +54,8 @@ func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
 func (ls *LetStatement) String() string {
 	var out bytes.Buffer
 
-	out.WriteString(ls.TokenLiteral() + " ")
+	out.WriteString(ls.TokenLiteral())
+	out.WriteString(" ")
 	out.WriteString(ls.Name.String())
 	out.WriteString(" = ")
 
@@ -88,7 +89,8 @@ func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
 func (rs *ReturnStatement) String() string {
 	var out bytes.Buffer
 
-	out.WriteString(rs.TokenLiteral() + " ")
+	out.WriteString(rs.TokenLiteral())
+	out.WriteString(" ")
 
 	if rs.ReturnValue != nil {
 		out.WriteString(rs.ReturnValue.String())
@@ -156,7 +158,9 @@ func (oe *InfixExpression) String() string {
 
 	out.WriteString("(")
 	out.WriteString(oe.Left.String())
-	out.WriteString(" " + oe.Operator + " ")
+	out.WriteString(" ")
+	out.WriteString(oe.Operator)
+	out.WriteString(" ")
 	out.WriteString(oe.Right.String())
 	out.WriteString(")")
 

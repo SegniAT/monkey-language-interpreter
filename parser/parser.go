@@ -103,8 +103,9 @@ func (p *Parser) peekError(t token.TokenType) {
 }
 
 func (p *Parser) ParseProgram() *ast.Program {
-	program := &ast.Program{}
-	program.Statements = []ast.Statement{}
+	program := &ast.Program{
+		Statements: []ast.Statement{},
+	}
 
 	for !p.curTokenIs(token.EOF) {
 		statement := p.parseStatement()

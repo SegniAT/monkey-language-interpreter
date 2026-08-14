@@ -20,6 +20,11 @@ func Start(in io.Reader, out io.Writer) {
 		fmt.Printf(PROMT)
 		scanned := scanner.Scan()
 		if !scanned {
+			// Check if the scanner stopped due to an error rather than just EOF
+			if err := scanner.Err(); err != nil {
+				fmt.Fprintf(out, "Error reading input: %s\n", err)
+			}
+
 			return
 		}
 
