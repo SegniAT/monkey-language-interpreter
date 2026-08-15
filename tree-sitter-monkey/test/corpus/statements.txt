@@ -1,0 +1,84 @@
+=================================
+Let statement with integer
+=================================
+
+let x = 5;
+
+---
+
+(source_file
+  (let_statement
+    name:  (identifier)
+    value: (integer)
+))
+
+=================================
+Let statement with identifier value
+=================================
+
+let x = y;
+
+---
+
+(source_file
+  (let_statement
+    name:  (identifier)
+    value: (identifier)
+))
+
+=================================
+Let statement without semicolon
+=================================
+
+let x = 6
+
+---
+
+(source_file
+  (let_statement
+    name:  (identifier)
+    value: (integer)
+))
+
+=================================
+Return statement
+=================================
+
+return 5;
+
+---
+
+(source_file
+  (return_statement
+    value: (integer)
+))
+
+=================================
+Multiple statements
+=================================
+
+let x = 5;
+let y = x;
+
+---
+
+(source_file
+  (let_statement
+    name:  (identifier)
+    value: (integer))
+   (let_statement
+    name:  (identifier)
+    value: (identifier))
+)
+
+=================================
+Keyword vs identifier (letx)
+=================================
+
+letx;
+---
+
+(source_file
+    (expression_statement
+      (identifier)))
+

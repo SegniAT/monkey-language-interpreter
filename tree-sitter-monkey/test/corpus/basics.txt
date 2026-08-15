@@ -1,0 +1,23 @@
+=================================
+Expression statement (identifier)
+=================================
+
+foo
+
+---
+
+(source_file
+  (expression_statement
+    (identifier)))
+
+==============================
+Expression statement (integer)
+==============================
+
+42
+
+---
+
+(source_file
+  (expression_statement
+    (integer)))

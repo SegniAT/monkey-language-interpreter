@@ -1,0 +1,231 @@
+==================
+Call expression without arguments
+==================
+
+foo()
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list))))
+
+==================
+Call expression with arguments list
+==================
+
+add(1, 2 * 3, 4 + 5)
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list
+        (integer)
+        (binary_expression
+          left: (integer)
+          right: (integer))
+        (binary_expression
+          left: (integer)
+          right: (integer))))))
+
+==================
+Nested Call expression
+==================
+
+add(add(1, 2), 3)
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (integer)
+            (integer)))
+        (integer)))))
+
+==================
+Simple index expression
+==================
+
+myArray[1 + 1]
+
+---
+
+(source_file
+  (expression_statement
+    (index_expression
+      object: (identifier)
+      index: (binary_expression
+        left: (integer)
+        right: (integer)))))
+
+==================
+Call expression left association and operator precedence
+==================
+
+a + add(b * c) + d
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (binary_expression
+        left: (identifier)
+        right: (call_expression
+          function: (identifier)
+          arguments: (argument_list (binary_expression
+            left: (identifier)
+            right: (identifier)))))
+      right: (identifier))))
+
+==================
+Call expression with multiple expression arguments
+==================
+
+add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list
+        (identifier)
+        (identifier)
+        (integer)
+        (binary_expression
+          left: (integer)
+          right: (integer))
+       (binary_expression
+          left: (integer)
+          right: (integer))
+       (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (integer)
+            (binary_expression
+              left: (integer)
+              right: (integer))))))))
+
+==================
+Call expression with an expression argument with multiple operators
+==================
+
+add(a + b + c * d / f + g)
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list
+(binary_expression
+          left: (binary_expression
+            left: (binary_expression
+              left: (identifier)
+              right: (identifier))
+            right: (binary_expression
+              left: (binary_expression
+                left: (identifier)
+                right: (identifier))
+              right: (identifier)))
+          right: (identifier))))))
+
+==================
+Index binds tighter than product
+==================
+
+a * b[2]
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (identifier)
+      right: (index_expression
+        object: (identifier)
+        index: (integer)))))
+
+==================
+Product (*), Parenteses('()') and Index('[]') operator precedence
+==================
+
+(a * (b[2]))
+
+---
+
+(source_file
+  (expression_statement
+    (paren_expression
+      (binary_expression
+        left: (identifier)
+        right: (paren_expression
+         (index_expression
+           object: (identifier)
+           index: (integer)))))))
+
+==================
+Index on Call expression result
+==================
+
+foo(x)[y]
+
+---
+
+(source_file
+  (expression_statement
+    (index_expression
+      object: (call_expression
+        function: (identifier)
+        arguments: (argument_list
+         (identifier)))
+      index: (identifier))))
+
+==================
+Call on Index expression result
+==================
+
+arr[0](x)
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (index_expression
+        object: (identifier)
+        index: (integer))
+      arguments: (argument_list
+        (identifier)))))
+
+==================
+Alternating chain of Call and Index operations
+==================
+
+a[0](1)[2]
+
+---
+
+(source_file
+  (expression_statement
+    (index_expression
+      object: (call_expression
+        function: (index_expression
+          object: (identifier)
+          index: (integer))
+        arguments: (argument_list (integer)))
+      index: (integer))))

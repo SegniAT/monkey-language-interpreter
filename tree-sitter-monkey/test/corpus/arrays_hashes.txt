@@ -1,0 +1,118 @@
+====================
+Basic array literals
+====================
+
+[1, 2, 3, 4];
+[];
+[1, 2 * 2, 3 + 3];
+
+---
+
+(source_file
+  (expression_statement (array_literal (integer) (integer) (integer) (integer)))
+  (expression_statement (array_literal))
+  (expression_statement
+    (array_literal
+      (integer)
+      (binary_expression
+        left: (integer)
+        right: (integer))
+      (binary_expression
+        left: (integer)
+        right: (integer)))))
+
+===================
+Basic hash literals
+===================
+
+{"one": 1, "two": 2, "three": 3};
+{};
+{true: 1, 2: 3};
+
+---
+
+(source_file
+  (expression_statement
+    (hash_literal
+      (hash_pair key: (string) value: (integer))
+      (hash_pair key: (string) value: (integer))
+      (hash_pair key: (string) value: (integer))))
+  (expression_statement (hash_literal))
+  (expression_statement
+    (hash_literal
+      (hash_pair key: (boolean) value: (integer))
+      (hash_pair key: (integer) value: (integer)))))
+
+=======================================================================
+Hash literals with binary expression values and trailing-comma lenience
+=======================================================================
+
+{"one": 0 + 1, "two": 10 - 8};
+{"one": 1,};
+
+---
+
+(source_file
+  (expression_statement
+    (hash_literal
+      (hash_pair
+        key: (string)
+        value: (binary_expression left: (integer) right: (integer)))
+      (hash_pair
+        key: (string)
+        value: (binary_expression left: (integer) right: (integer)))))
+
+  (expression_statement (hash_literal (hash_pair key: (string) value: (integer)))))
+
+=====================
+String as index value
+=====================
+
+person["name"]
+
+---
+
+(source_file
+  (expression_statement
+    (index_expression
+      object: (identifier)
+      index: (string))))
+
+==================================================
+Array literal with indexing and product operations
+==================================================
+
+a * [1, 2, 3, 4][b * c] * d
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (binary_expression
+        left: (identifier)
+        right: (index_expression
+          object: (array_literal (integer) (integer) (integer) (integer))
+          index: (binary_expression left: (identifier) right: (identifier))))
+      right: (identifier))))
+
+=========================================================
+Call expression with parameters of array literals indexed
+=========================================================
+
+add(a * b[2], b[1], 2 * [1, 2][1])
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list
+        (binary_expression left: (identifier) right: (index_expression object: (identifier) index: (integer)))
+        (index_expression object: (identifier) index: (integer))
+        (binary_expression
+          left: (integer)
+          right: (index_expression
+            object: (array_literal (integer) (integer))
+            index: (integer)))))))

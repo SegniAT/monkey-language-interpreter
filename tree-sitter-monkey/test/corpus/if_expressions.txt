@@ -1,0 +1,108 @@
+=================================
+Basic if statement
+=================================
+
+if (x<y) { x }
+
+---
+
+(source_file
+  (expression_statement
+    (if_expression
+      condition: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      consequence: (block
+        (expression_statement
+         (identifier))))))
+
+=================================
+if statement with an else block
+=================================
+
+if (x < y) { x } else { y }
+
+---
+
+(source_file
+  (expression_statement
+    (if_expression
+      condition: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      consequence: (block
+        (expression_statement
+         (identifier)))
+      alternative: (block
+        (expression_statement
+          (identifier))))))
+
+=================================
+if as a let value — everything's an expression
+=================================
+
+let result = if (x > 10) { "big" } else { "small" };
+
+---
+
+(source_file
+    (let_statement
+      name: (identifier)
+      value: (if_expression
+          condition: (binary_expression
+            left: (identifier)
+            right: (integer))
+          consequence: (block (expression_statement (string)))
+          alternative: (block (expression_statement (string))))))
+
+=================================
+The no-else-if nesting pattern
+=================================
+
+if (a) { 1 } else { if (b) { 2 } else { 3 } }
+
+---
+
+(source_file
+  (expression_statement
+    (if_expression
+      condition: (identifier)
+      consequence: (block (expression_statement (integer)))
+      alternative: (block (expression_statement
+          (if_expression
+            condition: (identifier)
+            consequence: (block (expression_statement (integer)))
+            alternative: (block (expression_statement (integer)))))))))
+
+=================================
+Multi-statement block
+=================================
+
+if (x) { let a = 1; a; }
+
+---
+
+(source_file
+  (expression_statement
+    (if_expression
+      condition: (identifier)
+      consequence: (block
+        (let_statement name: (identifier) value: (integer))
+        (expression_statement (identifier))))))
+
+=================================
+If-expr works as a binary operand
+=================================
+
+if (a) { 1 } else { 2 } + 3
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (if_expression
+          condition: (identifier)
+          consequence: (block (expression_statement (integer)))
+          alternative: (block (expression_statement (integer))))
+      right: (integer))))

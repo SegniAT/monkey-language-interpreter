@@ -1,0 +1,113 @@
+=================================
+Identifier with underscore
+=================================
+
+foo_bar
+
+---
+
+(source_file
+  (expression_statement
+    (identifier)))
+
+=================================
+Identifier with uppercase
+=================================
+
+FooBar
+
+---
+
+(source_file
+  (expression_statement
+    (identifier)))
+
+=================================
+Identifier stops at digit
+=================================
+
+foo1
+
+---
+
+(source_file
+  (expression_statement
+    (identifier))
+  (expression_statement
+    (integer)))
+
+=================================
+Integer with leading zeros
+=================================
+
+007
+
+---
+
+(source_file
+  (expression_statement
+    (integer)))
+
+=================================
+String literal
+=================================
+
+"Merina"
+
+---
+
+(source_file
+  (expression_statement
+    (string)))
+
+=================================
+Empty string
+=================================
+
+""
+
+---
+
+(source_file
+  (expression_statement
+    (string)))
+
+=================================
+Boolean true and false
+=================================
+
+true
+false
+
+---
+
+(source_file
+  (expression_statement
+    (boolean))
+  (expression_statement
+    (boolean)))
+
+=================================
+Keyword vs identifier
+=================================
+
+truex
+
+---
+
+(source_file
+  (expression_statement
+    (identifier)))
+
+=================================
+Unterminated string
+:error
+=================================
+
+"hello
+
+---
+
+(source_file
+  (ERROR))
+

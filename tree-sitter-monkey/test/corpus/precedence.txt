@@ -1,0 +1,268 @@
+==================
+Simple binary expression
+==================
+
+5 + 5
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (integer)
+      right: (integer))))
+
+==================
+Simple unary (!) expression with boolean literal
+==================
+
+!true
+
+---
+
+(source_file
+  (expression_statement
+    (unary_expression
+      (boolean))))
+
+==================
+Simple unary (-) expression with integer literal
+==================
+
+-15
+
+---
+
+(source_file
+  (expression_statement
+    (unary_expression
+      (integer))))
+
+==================
+Prefix binds tighter than product
+==================
+
+-a * b
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (unary_expression
+        (identifier))
+      right: (identifier))))
+
+==================
+Addition is left-associative
+==================
+
+a + b + c
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      right: (identifier))))
+
+==================
+Two unary operators
+==================
+
+!-a
+
+---
+
+(source_file
+  (expression_statement
+    (unary_expression
+      (unary_expression
+        (identifier)))))
+
+==================
+Product is left-associative
+==================
+
+a * b * c
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      right: (identifier))))
+
+==================
+Product has higher operator precedence than sum
+==================
+
+a + b / c
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (identifier)
+      right: (binary_expression
+        left: (identifier)
+        right: (identifier)))))
+
+==================
+Operator precedence between sum and product + left associativity
+==================
+
+a + b * c + d / e - f
+
+---
+
+(source_file
+  (expression_statement
+   (binary_expression
+     left: (binary_expression
+       left: (binary_expression
+         left: (identifier)
+         right: (binary_expression
+           left: (identifier)
+           right: (identifier)))
+       right: (binary_expression
+         left: (identifier)
+         right: (identifier)))
+     right: (identifier))))
+
+==================
+Two statements with a binary expression each
+==================
+
+3 + 4;-5 * 5
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (integer)
+      right: (integer)))
+  (expression_statement
+    (binary_expression
+      left: (unary_expression
+        (integer))
+      right: (integer))))
+
+==================
+LT (<) and GT (>) operators vs Equals (==) operator precedence
+==================
+
+5 > 4 == 3 < 4
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (binary_expression
+        left: (integer)
+        right: (integer))
+      right: (binary_expression
+        left: (integer)
+        right: (integer)))))
+
+==================
+Sum operator (+), Product operator (*) and Equals operator (==) precedence
+==================
+
+3 + 4 * 5 == 3 * 1 + 4 * 5
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (binary_expression
+        left: (integer)
+        right: (binary_expression
+          left: (integer)
+          right: (integer)))
+
+      right: (binary_expression
+        left: (binary_expression
+          left: (integer)
+          right: (integer))
+        right: (binary_expression
+          left: (integer)
+          right: (integer))))))
+
+==================
+Sum operator (+) with Parenthesis expression ('()')
+==================
+
+1 + (2 + 3) + 4
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (binary_expression
+        left: (integer)
+        right: (paren_expression
+          (binary_expression
+            left: (integer)
+            right: (integer))))
+      right: (integer))))
+
+==================
+Sum operator (+) and Product operator (*) with Parenthesis expression ('()')
+==================
+
+(5 + 5) * 2
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (paren_expression
+        (binary_expression
+          left: (integer)
+          right: (integer)))
+      right: (integer))))
+
+==================
+Unary operator (-) and Sum operator (+) with Parenthesis expression ('()')
+==================
+
+-(5 + 5)
+
+---
+
+(source_file
+  (expression_statement
+    (unary_expression
+      (paren_expression
+        (binary_expression
+          left: (integer)
+          right: (integer))))))
+
+==================
+Boolean literals, Unary operator (!), Equals operator (==) with Parenthesis expression ('()')
+==================
+
+!(true == true)
+
+---
+
+(source_file
+  (expression_statement
+    (unary_expression
+      (paren_expression
+        (binary_expression
+          left: (boolean)
+          right: (boolean))))))

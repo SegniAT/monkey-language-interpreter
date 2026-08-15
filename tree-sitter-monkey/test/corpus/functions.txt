@@ -1,0 +1,100 @@
+=================================
+Basic function literal with parameters
+=================================
+
+fn(x, y) { x + y; }
+
+---
+
+(source_file
+  (expression_statement
+    (function_literal
+      parameters: (parameter_list
+        name: (identifier)
+        name: (identifier))
+      body: (block
+        (expression_statement
+          (binary_expression
+            left: (identifier)
+            right: (identifier)))))))
+
+=================================
+Function with empty params, call on builtin inside block
+=================================
+
+fn() { puts("hi"); }
+
+---
+
+(source_file
+  (expression_statement
+    (function_literal
+      parameters: (parameter_list)
+      body: (block
+        (expression_statement
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list (string))))))))
+
+=================================
+Immediately Invoked Function Expression with a parameter
+=================================
+
+fn(x) { x; }(5)
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (function_literal
+          parameters: (parameter_list
+            name: (identifier))
+          body: (block
+            (expression_statement
+              (identifier))))
+      arguments: (argument_list (integer)))))
+
+=================================
+fn as let value
+=================================
+
+let add = fn(a, b) { a + b; };
+
+---
+
+(source_file
+  (let_statement
+    name: (identifier)
+    value: (function_literal
+      parameters: (parameter_list
+        name: (identifier)
+        name: (identifier)
+      )
+      body: (block
+        (expression_statement
+          (binary_expression
+            left: (identifier)
+            right: (identifier)))))))
+
+=================================
+Nested fn literal (closures)
+=================================
+
+fn(x) { fn(y) { x + y; }; }
+
+---
+
+(source_file
+  (expression_statement
+    (function_literal
+      parameters: (parameter_list name: (identifier))
+      body: (block
+        (expression_statement
+          (function_literal
+            parameters: (parameter_list name: (identifier))
+            body: (block
+              (expression_statement
+                (binary_expression
+                  left: (identifier)
+                  right: (identifier))))))))))

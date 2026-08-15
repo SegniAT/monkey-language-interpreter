@@ -1,0 +1,144 @@
+============================
+A relatively complex program
+============================
+
+let newAdder = fn(x) {
+  return fn(y) { return x + y; };
+};
+let addFive = newAdder(5);
+let sumTen = addFive(10);
+
+let map = fn(arr, f) {
+  let iter = fn(arr, acc) {
+    if (len(arr) == 0) {
+      return acc;
+    }
+    return iter(rest(arr), push(acc, f(first(arr))));
+  };
+  return iter(arr, []);
+};
+
+let doubled = map([1, 2, 3, 4], fn(x) { x * 2; });
+let data = {"users": [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}]};
+let aliceName = data["users"][0]["name"];
+puts(aliceName);
+puts(len(doubled));
+
+---
+
+(source_file
+(let_statement
+  name: (identifier)
+  value: (function_literal
+    parameters: (parameter_list name: (identifier))
+    body: (block
+      (return_statement
+        value: (function_literal
+          parameters: (parameter_list name: (identifier))
+          body: (block
+            (return_statement
+                value: (binary_expression
+                  left: (identifier)
+                  right: (identifier)))))))))
+
+(let_statement
+  name: (identifier)
+  value: (call_expression
+    function: (identifier)
+    arguments: (argument_list (integer))))
+
+(let_statement
+  name: (identifier)
+  value: (call_expression
+    function: (identifier)
+    arguments: (argument_list (integer))))
+
+(let_statement
+  name: (identifier)
+  value: (function_literal
+    parameters: (parameter_list name: (identifier) name: (identifier))
+    body: (block
+      (let_statement
+        name: (identifier)
+        value: (function_literal
+          parameters: (parameter_list name: (identifier) name: (identifier))
+          body: (block
+            (expression_statement
+              (if_expression
+                condition: (binary_expression
+                  left: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list (identifier)))
+                 right: (integer))
+                consequence: (block (return_statement value: (identifier)))))
+            (return_statement
+              value: (call_expression
+                 function: (identifier)
+                   arguments: (argument_list
+                   (call_expression
+                     function: (identifier)
+                     arguments: (argument_list (identifier)))
+                   (call_expression
+                     function: (identifier)
+                     arguments: (argument_list
+                       (identifier)
+                       (call_expression
+                         function: (identifier)
+                         arguments: (argument_list
+                           (call_expression
+                           function: (identifier)
+                           arguments: (argument_list (identifier)))))))))))))
+        (return_statement
+          value: (call_expression
+          function: (identifier)
+            arguments: (argument_list
+              (identifier)
+              (array_literal)))))))
+
+(let_statement
+  name: (identifier)
+  value: (call_expression
+    function: (identifier)
+    arguments: (argument_list
+      (array_literal (integer) (integer) (integer) (integer))
+      (function_literal
+        parameters: (parameter_list
+         name: (identifier))
+        body: (block
+          (expression_statement
+            (binary_expression left: (identifier) right: (integer))))))))
+
+(let_statement
+  name: (identifier)
+  value: (hash_literal
+    (hash_pair
+      key: (string)
+      value: (array_literal
+        (hash_literal
+          (hash_pair key: (string) value: (string))
+          (hash_pair key: (string) value: (integer)))
+        (hash_literal
+          (hash_pair key: (string) value: (string))
+          (hash_pair key: (string) value: (integer)))))))
+
+(let_statement
+  name: (identifier)
+  value: (index_expression
+    object: (index_expression
+      object: (index_expression
+        object: (identifier)
+        index: (string))
+      index: (integer))
+    index: (string)))
+
+(expression_statement
+  (call_expression
+    function: (identifier)
+    arguments: (argument_list (identifier))))
+
+(expression_statement
+  (call_expression
+    function: (identifier)
+    arguments: (argument_list (call_expression
+      function: (identifier)
+      arguments: (argument_list (identifier)))))))
