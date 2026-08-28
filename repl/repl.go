@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+
 	"github.com/SegniAT/monkey-language-interpreter/evaluator"
 	"github.com/SegniAT/monkey-language-interpreter/lexer"
 	"github.com/SegniAT/monkey-language-interpreter/object"
 	"github.com/SegniAT/monkey-language-interpreter/parser"
+	"github.com/SegniAT/monkey-language-interpreter/token"
 )
 
 const PROMT = ">> "
@@ -33,8 +35,8 @@ func Start(in io.Reader, out io.Writer) {
 		p := parser.New(l)
 
 		program := p.ParseProgram()
-		if len(p.Errors()) != 0 {
-			printParserErrors(out, p.Errors())
+		if len(p.Diagnostics()) != 0 {
+			printParserDiagnostics(out, p.Diagnostics())
 			continue
 		}
 
@@ -59,11 +61,11 @@ const MONKEY_FACE = `            __,__
            '-----'
 `
 
-func printParserErrors(out io.Writer, errors []string) {
+func printParserDiagnostics(out io.Writer, diagnostics []token.Diagnostic) {
 	io.WriteString(out, MONKEY_FACE)
 	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
-	io.WriteString(out, " parser errors:\n")
-	for _, msg := range errors {
-		io.WriteString(out, "\t"+msg+"\n")
+	io.WriteString(out, " parser diagnostics:\n")
+	for _, diag := range diagnostics {
+		io.WriteString(out, "\t"+diag.Severity.String()+": "+diag.Message+"\n")
 	}
 }

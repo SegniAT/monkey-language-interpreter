@@ -39,8 +39,8 @@ type (
 )
 
 type Parser struct {
-	l      *lexer.Lexer
-	errors []string
+	l           *lexer.Lexer
+	diagnostics []token.Diagnostic
 
 	curToken  token.Token
 	peekToken token.Token
@@ -51,8 +51,8 @@ type Parser struct {
 
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{
-		l:      l,
-		errors: []string{},
+		l:           l,
+		diagnostics: []token.Diagnostic{},
 	}
 
 	// Read two tokens, so curToken and peekToken are both set, see the nextToken function below
@@ -93,13 +93,17 @@ func (p *Parser) nextToken() {
 	p.peekToken = p.l.NextToken()
 }
 
-func (p *Parser) Errors() []string {
-	return p.errors
+func (p *Parser) Diagnostics() []token.Diagnostic {
+	return p.diagnostics
 }
 
 func (p *Parser) peekError(t token.TokenType) {
 	msg := fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
-	p.errors = append(p.errors, msg)
+	p.diagnostics = append(p.diagnostics, token.Diagnostic{
+		Message:  msg,
+		Range:    p.peekToken.Range,
+		Severity: token.Error,
+	})
 }
 
 func (p *Parser) ParseProgram() *ast.Program {
@@ -211,7 +215,11 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
 	if err != nil {
 		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
-		p.errors = append(p.errors, msg)
+		p.diagnostics = append(p.diagnostics, token.Diagnostic{
+			Message:  msg,
+			Range:    p.curToken.Range,
+			Severity: token.Error,
+		})
 		return nil
 	}
 
@@ -491,7 +499,11 @@ func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
 
 func (p *Parser) noPrefixParseFnError(t token.TokenType) {
 	msg := fmt.Sprintf("no prefix parse function for %s found", t)
-	p.errors = append(p.errors, msg)
+	p.diagnostics = append(p.diagnostics, token.Diagnostic{
+		Message:  msg,
+		Range:    p.curToken.Range,
+		Severity: token.Error,
+	})
 }
 
 func (p *Parser) peekPrecendence() int {

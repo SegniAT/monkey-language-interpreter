@@ -63,6 +63,36 @@ type Token struct {
 	Range   Range
 }
 
+type DiagnosticSeverity int
+
+const (
+	Error       DiagnosticSeverity = 1
+	Warning     DiagnosticSeverity = 2
+	Information DiagnosticSeverity = 3
+	Hint        DiagnosticSeverity = 4
+)
+
+func (s DiagnosticSeverity) String() string {
+	switch s {
+	case Error:
+		return "Error"
+	case Warning:
+		return "Warning"
+	case Information:
+		return "Information"
+	case Hint:
+		return "Hint"
+	default:
+		return "Unknown"
+	}
+}
+
+type Diagnostic struct {
+	Range    Range
+	Message  string
+	Severity DiagnosticSeverity
+}
+
 var Keywords = map[string]TokenType{
 	"fn":     FUNCTION,
 	"let":    LET,
