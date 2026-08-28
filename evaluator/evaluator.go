@@ -2,8 +2,8 @@ package evaluator
 
 import (
 	"fmt"
-	"monkey/ast"
-	"monkey/object"
+	"github.com/SegniAT/monkey-language-interpreter/ast"
+	"github.com/SegniAT/monkey-language-interpreter/object"
 )
 
 var (
@@ -243,7 +243,7 @@ func evalIdentifier(
 		return builtin
 	}
 
-	return newError("identifier not found: " + node.Value)
+	return newError("identifier not found: %s", node.Value)
 }
 
 func evalExpressions(

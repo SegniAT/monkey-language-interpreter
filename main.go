@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"monkey/repl"
+	"github.com/SegniAT/monkey-language-interpreter/repl"
 	"os"
 	"os/user"
 )

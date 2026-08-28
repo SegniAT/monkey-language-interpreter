@@ -1,9 +1,9 @@
 package evaluator
 
 import (
-	"monkey/lexer"
-	"monkey/object"
-	"monkey/parser"
+	"github.com/SegniAT/monkey-language-interpreter/lexer"
+	"github.com/SegniAT/monkey-language-interpreter/object"
+	"github.com/SegniAT/monkey-language-interpreter/parser"
 	"testing"
 )
 

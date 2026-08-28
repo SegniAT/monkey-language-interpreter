@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"hash/fnv"
-	"monkey/ast"
+	"github.com/SegniAT/monkey-language-interpreter/ast"
 	"strings"
 )
 

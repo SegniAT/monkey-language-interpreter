@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"monkey/token"
+	"github.com/SegniAT/monkey-language-interpreter/token"
 	"testing"
 )
 

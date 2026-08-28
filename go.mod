@@ -1,3 +1,3 @@
-module monkey
+module github.com/SegniAT/monkey-language-interpreter
 
-go 1.19
+go 1.24

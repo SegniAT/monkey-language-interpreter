@@ -2,9 +2,9 @@ package parser
 
 import (
 	"fmt"
-	"monkey/ast"
-	"monkey/lexer"
-	"monkey/token"
+	"github.com/SegniAT/monkey-language-interpreter/ast"
+	"github.com/SegniAT/monkey-language-interpreter/lexer"
+	"github.com/SegniAT/monkey-language-interpreter/token"
 	"strconv"
 )
 

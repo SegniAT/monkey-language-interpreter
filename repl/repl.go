@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"monkey/evaluator"
-	"monkey/lexer"
-	"monkey/object"
-	"monkey/parser"
+	"github.com/SegniAT/monkey-language-interpreter/evaluator"
+	"github.com/SegniAT/monkey-language-interpreter/lexer"
+	"github.com/SegniAT/monkey-language-interpreter/object"
+	"github.com/SegniAT/monkey-language-interpreter/parser"
 )
 
 const PROMT = ">> "
