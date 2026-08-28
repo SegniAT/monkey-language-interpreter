@@ -1,5 +1,7 @@
 package token
 
+type TokenType string
+
 const (
 	ILLEGAL TokenType = "ILLEGAL"
 	EOF     TokenType = "EOF"
@@ -44,11 +46,17 @@ const (
 	RETURN   TokenType = "RETURN"
 )
 
-type TokenType string
+// Position describes 1-indexed grid location of a byte in the input.
+type Position struct {
+	Line      uint
+	Character uint
+}
 
 type Token struct {
 	Type    TokenType
 	Literal string
+	Start   Position
+	End     Position
 }
 
 var Keywords = map[string]TokenType{
