@@ -58,8 +58,10 @@ func (l *Lexer) NextToken() token.Token {
 			tok = token.Token{
 				Type:    token.EQ,
 				Literal: "==",
-				Start:   startPosition,
-				End:     token.Position{Line: l.line, Character: l.character},
+				Range: token.Range{
+					Start: startPosition,
+					End:   token.Position{Line: l.line, Character: l.character},
+				},
 			}
 		} else {
 			tok = newToken(token.ASSIGN, l.ch, startPosition)
@@ -74,8 +76,10 @@ func (l *Lexer) NextToken() token.Token {
 			tok = token.Token{
 				Type:    token.NOT_EQ,
 				Literal: "!=",
-				Start:   startPosition,
-				End:     token.Position{Line: l.line, Character: l.character},
+				Range: token.Range{
+					Start: startPosition,
+					End:   token.Position{Line: l.line, Character: l.character},
+				},
 			}
 		} else {
 			tok = newToken(token.BANG, l.ch, startPosition)
@@ -103,8 +107,10 @@ func (l *Lexer) NextToken() token.Token {
 	case '"':
 		tok.Type = token.STRING
 		tok.Literal = l.readString()
-		tok.Start = startPosition
-		tok.End = token.Position{Line: l.line, Character: l.character} // Includes quotes as part of the token length
+		tok.Range = token.Range{
+			Start: startPosition,
+			End:   token.Position{Line: l.line, Character: l.character}, // Includes quotes as part of the token length
+		}
 	case '[':
 		tok = newToken(token.LBRACKET, l.ch, startPosition)
 	case ']':
@@ -114,18 +120,26 @@ func (l *Lexer) NextToken() token.Token {
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
+		tok.Range = token.Range{
+			Start: startPosition,
+			End:   startPosition,
+		}
 	default:
 		if isLetter(l.ch) {
 			tok.Literal = l.readIdentifier()
 			tok.Type = token.LookupIdent(tok.Literal)
-			tok.Start = startPosition
-			tok.End = token.Position{Line: l.line, Character: l.character - 1} // readIdentifier goes 1 byte past the identifier
+			tok.Range = token.Range{
+				Start: startPosition,
+				End:   token.Position{Line: l.line, Character: l.character - 1}, // readIdentifier goes 1 byte past the identifier
+			}
 			return tok
 		} else if isDigit(l.ch) {
 			tok.Type = token.INT
 			tok.Literal = l.readNumber()
-			tok.Start = startPosition
-			tok.End = token.Position{Line: l.line, Character: l.character - 1} // readNumber goes 1 byte past the identifier
+			tok.Range = token.Range{
+				Start: startPosition,
+				End:   token.Position{Line: l.line, Character: l.character - 1}, // readNumber goes 1 byte past the identifier
+			}
 			return tok
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch, startPosition)
@@ -141,8 +155,10 @@ func newToken(tokenType token.TokenType, ch byte, startEnd token.Position) token
 	return token.Token{
 		Type:    tokenType,
 		Literal: string(ch),
-		Start:   startEnd,
-		End:     startEnd,
+		Range: token.Range{
+			Start: startEnd,
+			End:   startEnd,
+		},
 	}
 }
 

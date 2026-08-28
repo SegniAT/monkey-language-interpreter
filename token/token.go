@@ -52,11 +52,15 @@ type Position struct {
 	Character uint
 }
 
+type Range struct {
+	Start Position
+	End   Position
+}
+
 type Token struct {
 	Type    TokenType
 	Literal string
-	Start   Position
-	End     Position
+	Range   Range
 }
 
 var Keywords = map[string]TokenType{
