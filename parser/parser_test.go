@@ -282,8 +282,6 @@ func TestParsingInfixExpressions(t *testing.T) {
 		program := p.ParseProgram()
 		checkParserDiagnostics(t, p)
 
-		fmt.Printf("%s\n", program.String())
-
 		if len(program.Statements) != 1 {
 			t.Fatalf("program.Statements does not contain %d statements. got=%d\n", 1, len(program.Statements))
 		}
@@ -581,7 +579,7 @@ func TestIfExpression(t *testing.T) {
 	}
 
 	if exp.Alternative != nil {
-		t.Errorf("exp.Alternative.Statements was not nil. got%+v", exp.Alternative.Token.Literal)
+		t.Errorf("exp.Alternative.Statements was not nil. got%+v", exp.Alternative.StartToken.Literal)
 	}
 
 }
@@ -1037,5 +1035,86 @@ func TestParsingHashLiteralsWithExpressions(t *testing.T) {
 		}
 
 		testFunc(value)
+	}
+}
+
+func TestNodeSpatialRanges(t *testing.T) {
+	tests := map[string]struct {
+		input         string
+		extractNode   func(*ast.Program) ast.Node
+		expectedStart token.Position
+		expectedEnd   token.Position
+	}{
+		"Array Literal Bounds": {
+			input: "let a = [1, 2, 3];",
+			extractNode: func(prog *ast.Program) ast.Node {
+				letStmt := prog.Statements[0].(*ast.LetStatement)
+				return letStmt.Value
+			},
+			expectedStart: token.Position{Line: 1, Character: 9},
+			expectedEnd:   token.Position{Line: 1, Character: 17},
+		},
+		"Call Expression Bounds": {
+			input: "add(1, 2)",
+			extractNode: func(prog *ast.Program) ast.Node {
+				exprStmt := prog.Statements[0].(*ast.ExpressionStatement)
+				return exprStmt.Expression
+			},
+			expectedStart: token.Position{Line: 1, Character: 1},
+			expectedEnd:   token.Position{Line: 1, Character: 9},
+		},
+		"Index Expression Bounds": {
+			input: "nums[1 + offset]",
+			extractNode: func(prog *ast.Program) ast.Node {
+				exprStmt := prog.Statements[0].(*ast.ExpressionStatement)
+				return exprStmt.Expression
+			},
+			expectedStart: token.Position{Line: 1, Character: 5},
+			expectedEnd:   token.Position{Line: 1, Character: 16},
+		},
+		"Block Statement Bounds": {
+			input: `fn() {
+				puts("hello there")
+			}`,
+			extractNode: func(prog *ast.Program) ast.Node {
+				exprStmt := prog.Statements[0].(*ast.ExpressionStatement)
+				fnLit := exprStmt.Expression.(*ast.FunctionLiteral)
+				return fnLit.Body
+			},
+			expectedStart: token.Position{Line: 1, Character: 6},
+			expectedEnd:   token.Position{Line: 3, Character: 4},
+		},
+		"Hash Literal Bounds": {
+			input: `{
+				1: "one",
+				2: "two",
+			}`,
+			extractNode: func(prog *ast.Program) ast.Node {
+				exprStmt := prog.Statements[0].(*ast.ExpressionStatement)
+				hashLit := exprStmt.Expression.(*ast.HashLiteral)
+				return hashLit
+			},
+			expectedStart: token.Position{Line: 1, Character: 1},
+			expectedEnd:   token.Position{Line: 4, Character: 4},
+		},
+	}
+
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			l := lexer.New(tt.input)
+			p := New(l)
+			program := p.ParseProgram()
+			checkParserDiagnostics(t, p)
+
+			node := tt.extractNode(program)
+
+			if node.Start() != tt.expectedStart {
+				t.Errorf("expected start %v, got %v", tt.expectedStart, node.Start())
+			}
+
+			if node.End() != tt.expectedEnd {
+				t.Errorf("expected end %v, got %v", tt.expectedEnd, node.End())
+			}
+		})
 	}
 }

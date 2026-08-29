@@ -302,7 +302,7 @@ func (p *Parser) parseIfExpression() ast.Expression {
 }
 
 func (p *Parser) parseBlockStatement() *ast.BlockStatement {
-	block := &ast.BlockStatement{Token: p.curToken}
+	block := &ast.BlockStatement{StartToken: p.curToken}
 	block.Statements = []ast.Statement{}
 
 	p.nextToken()
@@ -313,6 +313,10 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 			block.Statements = append(block.Statements, stmt)
 		}
 		p.nextToken()
+	}
+
+	if p.curTokenIs(token.RBRACE) {
+		block.EndToken = p.curToken
 	}
 
 	return block
@@ -366,31 +370,8 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {
 	exp := &ast.CallExpression{Token: p.curToken, Function: function}
 	exp.Arguments = p.parseExpressionList(token.RPAREN)
+	exp.EndToken = p.curToken
 	return exp
-}
-
-func (p *Parser) parseCallArguments() []ast.Expression {
-	args := []ast.Expression{}
-
-	if p.peekTokenIs(token.RPAREN) {
-		p.nextToken()
-		return args
-	}
-
-	p.nextToken()
-	args = append(args, p.parseExpression(LOWEST))
-
-	for p.peekTokenIs(token.COMMA) {
-		p.nextToken()
-		p.nextToken()
-		args = append(args, p.parseExpression(LOWEST))
-	}
-
-	if !p.expectPeek(token.RPAREN) {
-		return nil
-	}
-
-	return args
 }
 
 func (p *Parser) parseStringLiteral() ast.Expression {
@@ -398,8 +379,9 @@ func (p *Parser) parseStringLiteral() ast.Expression {
 }
 
 func (p *Parser) parseArrayLiteral() ast.Expression {
-	array := &ast.ArrayLiteral{Token: p.curToken}
+	array := &ast.ArrayLiteral{StartToken: p.curToken}
 	array.Elements = p.parseExpressionList(token.RBRACKET)
+	array.EndToken = p.curToken
 	return array
 }
 
@@ -428,7 +410,7 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expression {
 }
 
 func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
-	exp := &ast.IndexExpression{Token: p.curToken, Left: left}
+	exp := &ast.IndexExpression{StartToken: p.curToken, Left: left}
 
 	p.nextToken()
 
@@ -438,11 +420,13 @@ func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
 		return nil
 	}
 
+	exp.EndToken = p.curToken
+
 	return exp
 }
 
 func (p *Parser) parseHashLiteral() ast.Expression {
-	hash := &ast.HashLiteral{Token: p.curToken}
+	hash := &ast.HashLiteral{StartToken: p.curToken}
 	hash.Pairs = make(map[ast.Expression]ast.Expression)
 
 	for !p.peekTokenIs(token.RBRACE) {
@@ -467,6 +451,8 @@ func (p *Parser) parseHashLiteral() ast.Expression {
 	if !p.expectPeek(token.RBRACE) {
 		return nil
 	}
+
+	hash.EndToken = p.curToken
 
 	return hash
 }
