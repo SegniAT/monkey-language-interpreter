@@ -2,9 +2,11 @@ package parser
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/SegniAT/monkey-language-interpreter/ast"
 	"github.com/SegniAT/monkey-language-interpreter/lexer"
-	"testing"
+	"github.com/SegniAT/monkey-language-interpreter/token"
 )
 
 func TestLetStatements(t *testing.T) {
@@ -22,7 +24,7 @@ func TestLetStatements(t *testing.T) {
 		l := lexer.New(tt.input)
 		p := New(l)
 		program := p.ParseProgram()
-		checkParserErrors(t, p)
+		checkParserDiagnostics(t, p)
 
 		if len(program.Statements) != 1 {
 			t.Fatalf("program.Statements does not contain 1 statements. got=%d", len(program.Statements))
@@ -41,17 +43,27 @@ func TestLetStatements(t *testing.T) {
 	}
 }
 
-func checkParserErrors(t *testing.T, p *Parser) {
-	errors := p.Errors()
+func checkParserDiagnostics(t *testing.T, p *Parser) {
+	diagnostics := p.Diagnostics()
 
-	if len(errors) == 0 {
+	errorCount := 0
+	for _, diag := range diagnostics {
+		if diag.Severity == token.Error {
+			errorCount++
+		}
+	}
+
+	if errorCount == 0 {
 		return
 	}
 
-	t.Errorf("parser has %d errors", len(errors))
+	t.Errorf("parser has %d errors", errorCount)
 
-	for _, msg := range errors {
-		t.Errorf("parser error: %q", msg)
+	for _, diag := range diagnostics {
+		if diag.Severity != token.Error {
+			continue
+		}
+		t.Errorf("parser error: %q", diag.Message)
 	}
 	t.FailNow()
 }
@@ -95,7 +107,7 @@ func TestReturnStatements(t *testing.T) {
 		l := lexer.New(tt.input)
 		p := New(l)
 		program := p.ParseProgram()
-		checkParserErrors(t, p)
+		checkParserDiagnostics(t, p)
 
 		if len(program.Statements) != 1 {
 			t.Fatalf("program.Statements does not contain 1 statements. got=%d", len(program.Statements))
@@ -125,7 +137,7 @@ func TestIdentifierExpression(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	if len(program.Statements) != 1 {
 		t.Fatalf("program has not enough statements. got =%d", len(program.Statements))
@@ -156,7 +168,7 @@ func TestIntegerLiteralExpression(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	if len(program.Statements) != 1 {
 		t.Fatalf("program has not enough statements. got=%d", len(program.Statements))
@@ -196,7 +208,7 @@ func TestParsingPrefixExpressions(t *testing.T) {
 		p := New(l)
 
 		program := p.ParseProgram()
-		checkParserErrors(t, p)
+		checkParserDiagnostics(t, p)
 
 		if len(program.Statements) != 1 {
 			t.Fatalf("program.Statements does not contain %d statements. got=%d\n", 1, len(program.Statements))
@@ -268,7 +280,7 @@ func TestParsingInfixExpressions(t *testing.T) {
 		p := New(l)
 
 		program := p.ParseProgram()
-		checkParserErrors(t, p)
+		checkParserDiagnostics(t, p)
 
 		fmt.Printf("%s\n", program.String())
 
@@ -404,7 +416,7 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 		l := lexer.New(tt.input)
 		p := New(l)
 		program := p.ParseProgram()
-		checkParserErrors(t, p)
+		checkParserDiagnostics(t, p)
 
 		actual := program.String()
 
@@ -483,7 +495,7 @@ func TestBooleanExpression(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	if len(program.Statements) != 1 {
 		t.Fatalf("program has not enough statements. got=%d", len(program.Statements))
@@ -535,7 +547,7 @@ func TestIfExpression(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	if len(program.Statements) != 1 {
 		t.Fatalf("program.Body does not contain %d statements. got=%d\n", 1, len(program.Statements))
@@ -580,7 +592,7 @@ func TestIfElseExpression(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	if len(program.Statements) != 1 {
 		t.Fatalf("program.Body does not contain %d statements. got=%d\n", 1, len(program.Statements))
@@ -637,7 +649,7 @@ func TestFunctionLiteralParsing(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	if len(program.Statements) != 1 {
 		t.Fatalf("program.Body does not contain %d statements. got=%d\n", 1, len(program.Statements))
@@ -686,7 +698,7 @@ func TestFunctionParameterParsing(t *testing.T) {
 		l := lexer.New(tt.input)
 		p := New(l)
 		program := p.ParseProgram()
-		checkParserErrors(t, p)
+		checkParserDiagnostics(t, p)
 
 		stmt := program.Statements[0].(*ast.ExpressionStatement)
 		function := stmt.Expression.(*ast.FunctionLiteral)
@@ -707,7 +719,7 @@ func TestCallExpressionParsing(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	if len(program.Statements) != 1 {
 		t.Fatalf("program.Statements does not contain %d statements. got=%d\n", 1, len(program.Statements))
@@ -763,7 +775,7 @@ func TestCallExpressionParameterParsing(t *testing.T) {
 		l := lexer.New(tt.input)
 		p := New(l)
 		program := p.ParseProgram()
-		checkParserErrors(t, p)
+		checkParserDiagnostics(t, p)
 
 		stmt := program.Statements[0].(*ast.ExpressionStatement)
 		exp, ok := stmt.Expression.(*ast.CallExpression)
@@ -794,7 +806,7 @@ func TestStringLiteralExpression(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	stmt := program.Statements[0].(*ast.ExpressionStatement)
 	literal, ok := stmt.Expression.(*ast.StringLiteral)
@@ -814,7 +826,7 @@ func TestParsingArrayLiterals(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
 	array, ok := stmt.Expression.(*ast.ArrayLiteral)
@@ -837,7 +849,7 @@ func TestParsingIndexExpressions(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
 	indexExp, ok := stmt.Expression.(*ast.IndexExpression)
@@ -860,7 +872,7 @@ func TestParsingEmptyHashLiteral(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	stmt := program.Statements[0].(*ast.ExpressionStatement)
 	hash, ok := stmt.Expression.(*ast.HashLiteral)
@@ -879,7 +891,7 @@ func TestParsingHashLiteralsStringKeys(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	stmt := program.Statements[0].(*ast.ExpressionStatement)
 	hash, ok := stmt.Expression.(*ast.HashLiteral)
@@ -915,7 +927,7 @@ func TestParsingHashLiteralsBooleanKeys(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	stmt := program.Statements[0].(*ast.ExpressionStatement)
 	hash, ok := stmt.Expression.(*ast.HashLiteral)
@@ -950,7 +962,7 @@ func TestParsingHashLiteralsIntegerKeys(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	stmt := program.Statements[0].(*ast.ExpressionStatement)
 	hash, ok := stmt.Expression.(*ast.HashLiteral)
@@ -987,7 +999,7 @@ func TestParsingHashLiteralsWithExpressions(t *testing.T) {
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	checkParserDiagnostics(t, p)
 
 	stmt := program.Statements[0].(*ast.ExpressionStatement)
 	hash, ok := stmt.Expression.(*ast.HashLiteral)
