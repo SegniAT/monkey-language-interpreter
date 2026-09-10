@@ -36,7 +36,7 @@ func Start(in io.Reader, out io.Writer) {
 
 		program := p.ParseProgram()
 		if len(p.Diagnostics()) != 0 {
-			printParserDiagnostics(out, p.Diagnostics())
+			PrintParserDiagnostics(out, "", p.Diagnostics())
 			continue
 		}
 
@@ -61,10 +61,14 @@ const MONKEY_FACE = `            __,__
            '-----'
 `
 
-func printParserDiagnostics(out io.Writer, diagnostics []token.Diagnostic) {
+func PrintParserDiagnostics(out io.Writer, filename string, diagnostics []token.Diagnostic) {
 	io.WriteString(out, MONKEY_FACE)
 	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
-	io.WriteString(out, " parser diagnostics:\n")
+	if filename != "" {
+		io.WriteString(out, " parser diagnostics in "+filename+":\n")
+	} else {
+		io.WriteString(out, " parser diagnostics:\n")
+	}
 	for _, diag := range diagnostics {
 		io.WriteString(out, "\t"+diag.Severity.String()+": "+diag.Message+"\n")
 	}
