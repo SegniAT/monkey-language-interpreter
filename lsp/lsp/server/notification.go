@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"log/slog"
 
-	"github.com/SegniAT/monkey-language-interpreter/token"
 	"github.com/SegniAT/monkey-language-interpreter/lsp/lsp/protocol"
+	"github.com/SegniAT/monkey-language-interpreter/token"
 )
 
 func (s *Server) handleInitialized(_ json.RawMessage) {
@@ -80,13 +80,14 @@ func toProtocolDiagnostics(diagnostics []token.Diagnostic) []protocol.Diagnostic
 	for _, d := range diagnostics {
 		result = append(result, protocol.Diagnostic{
 			Range: protocol.Range{
+				// converts an internal inclusive (1-indexed) token range into LSP's exclusive (0-indexed) range
 				Start: protocol.Position{
 					Line:      d.Range.Start.Line - 1,
 					Character: d.Range.Start.Character - 1,
 				},
 				End: protocol.Position{
 					Line:      d.Range.End.Line - 1,
-					Character: d.Range.End.Character - 1,
+					Character: d.Range.End.Character,
 				},
 			},
 			Severity: int(d.Severity),

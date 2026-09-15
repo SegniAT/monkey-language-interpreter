@@ -12,10 +12,8 @@ func toProtocolHover(h *analysis.Hover) *protocol.Hover {
 
 	var r *protocol.Range
 	if h.Range != nil {
-		r = &protocol.Range{
-			Start: toProtocolPosition(h.Range.Start),
-			End:   toProtocolPosition(h.Range.End),
-		}
+		converted := toProtocolRange(*h.Range)
+		r = &converted
 	}
 
 	return &protocol.Hover{
@@ -30,11 +28,8 @@ func toProtocolLocation(l *analysis.Location) *protocol.Location {
 	}
 
 	return &protocol.Location{
-		URI: l.URI,
-		Range: protocol.Range{
-			Start: toProtocolPosition(l.Range.Start),
-			End:   toProtocolPosition(l.Range.End),
-		},
+		URI:   l.URI,
+		Range: toProtocolRange(l.Range),
 	}
 }
 
@@ -51,10 +46,17 @@ func toProtocolCompletionItems(items []analysis.CompletionItem) []protocol.Compl
 	return result
 }
 
-func toProtocolPosition(p analysis.Position) protocol.Position {
-	return protocol.Position{
-		Line:      p.Line - 1,
-		Character: p.Character - 1,
+// toProtocolRange converts an internal inclusive (1-indexed) analysis range into LSP's exclusive (0-indexed) range
+func toProtocolRange(r analysis.Range) protocol.Range {
+	return protocol.Range{
+		Start: protocol.Position{
+			Line:      r.Start.Line - 1,
+			Character: r.Start.Character,
+		},
+		End: protocol.Position{
+			Line:      r.End.Line - 1,
+			Character: r.End.Character, // LSP end character is 0-indexed exclusive
+		},
 	}
 }
 
