@@ -234,6 +234,20 @@ var builtins = map[string]*object.Builtin{
 			return resArr
 		},
 	},
+	"trimSpace": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", len(args))
+			}
+
+			str, ok := args[0].(*object.String)
+			if !ok {
+				return newError("argument to `trimSpace` must be STRING, got %s", args[0].Type())
+			}
+
+			return &object.String{Value: strings.TrimSpace(str.Value)}
+		},
+	},
 }
 
 func BuiltinNames() []string {
