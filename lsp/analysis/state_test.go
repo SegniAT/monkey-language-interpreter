@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/SegniAT/monkey-language-interpreter/token"
 	"github.com/SegniAT/monkey-language-interpreter/lsp/analysis"
+	"github.com/SegniAT/monkey-language-interpreter/token"
 )
 
 func TestDidOpen(t *testing.T) {
@@ -315,6 +315,7 @@ func TestCompletion(t *testing.T) {
 				label string
 				kind  analysis.CompletionItemKind
 			}{
+				{label: "readFile", kind: analysis.Function},
 				{label: "rest", kind: analysis.Function},
 				{label: "return", kind: analysis.Keyword},
 			},

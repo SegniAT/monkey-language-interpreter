@@ -2,12 +2,14 @@ package analysis
 
 import (
 	"testing"
+
+	"github.com/SegniAT/monkey-language-interpreter/evaluator"
 )
 
 func TestNewRootScope(t *testing.T) {
 	rootSymbTable := newRootScope()
 
-	for _, name := range builtins {
+	for _, name := range evaluator.BuiltinNames() {
 		symbol, ok := rootSymbTable.Symbols[name]
 		if !ok {
 			t.Fatalf("Inbuilt symbol with name '%s' not found.", name)

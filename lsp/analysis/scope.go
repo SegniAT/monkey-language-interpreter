@@ -2,6 +2,7 @@ package analysis
 
 import (
 	"github.com/SegniAT/monkey-language-interpreter/ast"
+	"github.com/SegniAT/monkey-language-interpreter/evaluator"
 )
 
 type symbolType string
@@ -19,8 +20,6 @@ type symbol struct {
 	Identifier *ast.Identifier
 	Used       bool
 }
-
-var builtins = []string{"len", "first", "last", "rest", "push", "puts"}
 
 type symbolTable struct {
 	Outer   *symbolTable
@@ -40,7 +39,7 @@ func newRootScope() *symbolTable {
 		Symbols: map[string]*symbol{},
 	}
 
-	for _, name := range builtins {
+	for _, name := range evaluator.BuiltinNames() {
 		symbol := &symbol{
 			Name: name,
 			Type: builtin,

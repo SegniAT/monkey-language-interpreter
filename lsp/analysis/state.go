@@ -14,12 +14,16 @@ import (
 )
 
 var builtinDocs = map[string]string{
-	"len":   "Calculates and returns the length of a string or an array.\n\n**Returns:** `INTEGER`\n\n**Example:**\n```monkey\nlen(\"monkey\"); // 6\nlen([1, 2, 3]); // 3\n```",
-	"first": "Returns the first element of an array. If the array is empty, returns `NULL`.\n\n**Returns:** `ANY`\n\n**Example:**\n```monkey\nlet arr = [1, 2, 3];\nfirst(arr); // 1\n```",
-	"last":  "Returns the last element of an array. If the array is empty, returns `NULL`.\n\n**Returns:** `ANY`\n\n**Example:**\n```monkey\nlet arr = [1, 2, 3];\nlast(arr); // 3\n```",
-	"rest":  "Returns a new array containing all elements of the given array except the first one. If the array is empty, returns `NULL`.\n\n**Returns:** `ARRAY`\n\n**Example:**\n```monkey\nlet arr = [1, 2, 3];\nrest(arr); // [2, 3]\n```",
-	"push":  "Adds a new element to the end of an array and returns the newly allocated array.\n\n**Returns:** `ARRAY`\n\n**Example:**\n```monkey\nlet arr = [1, 2];\npush(arr, 3); // [1, 2, 3]\n```",
-	"puts":  "Prints the given arguments to the standard output as strings.\n\n**Returns:** `NULL`\n\n**Example:**\n```monkey\nputs(\"Hello, \", \"World!\");\n```",
+	"len":         "Calculates and returns the length of a string or an array.\n\n**Returns:** `INTEGER`\n\n**Example:**\n```monkey\nlen(\"monkey\"); // 6\nlen([1, 2, 3]); // 3\n```",
+	"first":       "Returns the first element of an array. If the array is empty, returns `NULL`.\n\n**Returns:** `ANY`\n\n**Example:**\n```monkey\nlet arr = [1, 2, 3];\nfirst(arr); // 1\n```",
+	"last":        "Returns the last element of an array. If the array is empty, returns `NULL`.\n\n**Returns:** `ANY`\n\n**Example:**\n```monkey\nlet arr = [1, 2, 3];\nlast(arr); // 3\n```",
+	"rest":        "Returns a new array containing all elements of the given array except the first one. If the array is empty, returns `NULL`.\n\n**Returns:** `ARRAY`\n\n**Example:**\n```monkey\nlet arr = [1, 2, 3];\nrest(arr); // [2, 3]\n```",
+	"push":        "Adds a new element to the end of an array and returns the newly allocated array.\n\n**Returns:** `ARRAY`\n\n**Example:**\n```monkey\nlet arr = [1, 2];\npush(arr, 3); // [1, 2, 3]\n```",
+	"puts":        "Prints the given arguments to the standard output as strings.\n\n**Returns:** `NULL`\n\n**Example:**\n```monkey\nputs(\"Hello, \", \"World!\");\n```",
+	"readFile":    "Reads the file at the given path and returns its contents as a string.\n\n**Returns:** `STRING`\n\n**Example:**\n```monkey\nreadFile(\"input.txt\");\n```",
+	"splitString": "Splits a string by a separator and returns an array of strings.\n\n**Returns:** `ARRAY` of `STRING`\n\n**Example:**\n```monkey\nsplitString(\"a,b,c\", \",\");\n```",
+	"atoi":        "Parses a string into an integer.\n\n**Returns:** `INTEGER`\n\n**Example:**\n```monkey\natoi(\"42\");\n```",
+	"sortInts":    "Sorts an array of integers in ascending order and returns a new array.\n\n**Returns:** `ARRAY` of `INTEGER`\n\n**Example:**\n```monkey\nsortInts([3, 1, 2]);\n```",
 }
 
 type Document struct {

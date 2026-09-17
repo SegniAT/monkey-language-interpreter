@@ -2,6 +2,12 @@ package evaluator
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"slices"
+	"strconv"
+	"strings"
+
 	"github.com/SegniAT/monkey-language-interpreter/object"
 )
 
@@ -70,7 +76,7 @@ var builtins = map[string]*object.Builtin{
 
 			arr := args[0].(*object.Array)
 			if length := len(arr.Elements); length > 0 {
-				newElements := make([]object.Object, length-1, length-1)
+				newElements := make([]object.Object, length-1)
 				copy(newElements, arr.Elements[1:length])
 				return &object.Array{Elements: newElements}
 			}
@@ -91,7 +97,7 @@ var builtins = map[string]*object.Builtin{
 			arr := args[0].(*object.Array)
 			length := len(arr.Elements)
 
-			newElements := make([]object.Object, length+1, length+1)
+			newElements := make([]object.Object, length+1)
 			copy(newElements, arr.Elements)
 			newElements[length] = args[1]
 
@@ -107,4 +113,134 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
+	"readFile": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", len(args))
+			}
+
+			fileName := args[0]
+			if fileName.Type() != object.STRING_OBJ {
+				return newError("argument to `readFile` must be STRING, got %s", fileName.Type())
+			}
+
+			strObj, _ := fileName.(*object.String)
+
+			absPath, err := filepath.Abs(strObj.Value)
+			if err != nil {
+				return newError("could not resolve path %q: %s", strObj.Value, err.Error())
+			}
+
+			byteContent, err := os.ReadFile(absPath)
+			if err != nil {
+				return newError("could not read file %q: %s", absPath, err.Error())
+			}
+
+			return &object.String{Value: string(byteContent)}
+		},
+	},
+	"splitString": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 2 {
+				return newError("wrong number of arguments. got=%d, want=2", len(args))
+			}
+
+			str, sep := args[0], args[1]
+			if str.Type() != object.STRING_OBJ || sep.Type() != object.STRING_OBJ {
+				return newError("argument to `splitString` must be (STRING, STRING), got %s,%s", str.Type(), sep.Type())
+			}
+
+			strObj, _ := str.(*object.String)
+			sepObj, _ := sep.(*object.String)
+			splitRes := strings.Split(strObj.Value, sepObj.Value)
+
+			result := &object.Array{
+				Elements: make([]object.Object, len(splitRes)),
+			}
+
+			for i, s := range splitRes {
+				result.Elements[i] = &object.String{
+					Value: s,
+				}
+			}
+
+			return result
+		},
+	},
+	"atoi": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", len(args))
+			}
+
+			numStr := args[0]
+			if numStr.Type() != object.STRING_OBJ {
+				return newError("argument to `atoi` must be STRING, got %s", numStr.Type())
+			}
+
+			numStrObj, _ := numStr.(*object.String)
+			num, err := strconv.Atoi(numStrObj.Value)
+			if err != nil {
+				return newError("could not convert %q to integer: %s", numStr.Inspect(), err.Error())
+			}
+
+			return &object.Integer{
+				Value: int64(num),
+			}
+		},
+	},
+	"sortInts": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", len(args))
+			}
+			arr := args[0]
+			if arr.Type() != object.ARRAY_OBJ {
+				return newError("argument to `sortInts` must be ARRAY, got %s", arr.Type())
+			}
+
+			arrObj, ok := arr.(*object.Array)
+			if !ok {
+				return newError("argument to `sortInts` must be ARRAY")
+			}
+
+			// Each element should be integer
+			for i, el := range arrObj.Elements {
+				if el.Type() == object.INTEGER_OBJ {
+					continue
+				}
+
+				return newError("argument to `sortInts` must be ARRAY of integers, got %s at index %d", el.Type(), i)
+			}
+
+			goArr := make([]int64, len(arrObj.Elements))
+			for i, el := range arrObj.Elements {
+				inObj, _ := el.(*object.Integer)
+				goArr[i] = inObj.Value
+			}
+
+			slices.Sort(goArr)
+
+			resArr := &object.Array{
+				Elements: make([]object.Object, len(goArr)),
+			}
+
+			for i, el := range goArr {
+				resArr.Elements[i] = &object.Integer{
+					Value: el,
+				}
+			}
+
+			return resArr
+		},
+	},
+}
+
+func BuiltinNames() []string {
+	names := make([]string, 0, len(builtins))
+	for name := range builtins {
+		names = append(names, name)
+	}
+	slices.Sort(names)
+	return names
 }

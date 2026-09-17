@@ -70,4 +70,3 @@ func TestToProtocolDiagnosticsExclusiveEnd(t *testing.T) {
 		})
 	}
 }
-
