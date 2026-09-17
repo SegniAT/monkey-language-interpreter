@@ -1,6 +1,8 @@
 package lexer
 
 import (
+	"strings"
+
 	"github.com/SegniAT/monkey-language-interpreter/token"
 )
 
@@ -191,7 +193,7 @@ func (l *Lexer) readNumber() string {
 }
 
 func (l *Lexer) readString() string {
-	position := l.position + 1
+	var sb strings.Builder
 
 	for {
 		l.readChar()
@@ -199,9 +201,34 @@ func (l *Lexer) readString() string {
 		if l.ch == '"' || l.ch == 0 {
 			break
 		}
+
+		if l.ch != '\\' {
+			sb.WriteByte(l.ch)
+			continue
+		}
+
+		switch l.peekChar() {
+		case 'n':
+			l.readChar()
+			sb.WriteByte('\n')
+		case 't':
+			l.readChar()
+			sb.WriteByte('\t')
+		case 'r':
+			l.readChar()
+			sb.WriteByte('\r')
+		case '"':
+			l.readChar()
+			sb.WriteByte('"')
+		case '\\':
+			l.readChar()
+			sb.WriteByte('\\')
+		default:
+			sb.WriteByte('\\')
+		}
 	}
 
-	return l.input[position:l.position]
+	return sb.String()
 }
 
 func isDigit(ch byte) bool {

@@ -29,6 +29,8 @@ func TestNextToken(t *testing.T) {
 	"foo bar"
 	[1, 2];
 	{"foo": "bar"}
+	"foo\nbar"
+	"tab\there"
 	`
 
 	tests := []struct {
@@ -140,7 +142,10 @@ func TestNextToken(t *testing.T) {
 		{token.STRING, "bar", token.Range{Start: token.Position{Line: 23, Character: 10}, End: token.Position{Line: 23, Character: 14}}},
 		{token.RBRACE, "}", token.Range{Start: token.Position{Line: 23, Character: 15}, End: token.Position{Line: 23, Character: 15}}},
 
-		{token.EOF, "", token.Range{Start: token.Position{Line: 24, Character: 2}, End: token.Position{Line: 24, Character: 2}}},
+		{token.STRING, "foo\nbar", token.Range{Start: token.Position{Line: 24, Character: 2}, End: token.Position{Line: 24, Character: 11}}},
+		{token.STRING, "tab\there", token.Range{Start: token.Position{Line: 25, Character: 2}, End: token.Position{Line: 25, Character: 12}}},
+
+		{token.EOF, "", token.Range{Start: token.Position{Line: 26, Character: 2}, End: token.Position{Line: 26, Character: 2}}},
 	}
 
 	l := New(input)
