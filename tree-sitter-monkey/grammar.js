@@ -65,7 +65,11 @@ export default grammar({
 
     identifier: _ => /[a-zA-Z_]+/,
     integer: _ => /\d+/,
-    string: _ => token(seq('"', /[^"]*/, '"')), // no escapes
+    string: $ => seq('"', repeat(choice(
+      /[^"\\]/,          // any char except " and \
+      $.escape_sequence, // \n, \t, \\, \"
+    )), '"'),
+    escape_sequence: _ => /\\[ntr"\\]/,
     boolean: _ => choice("true", "false"),
 
     unary_expression: $ => prec(5, choice(

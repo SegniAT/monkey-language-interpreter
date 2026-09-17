@@ -28,6 +28,8 @@
 
 (integer) @number
 
+(escape_sequence) @string.escape
+
 (string) @string
 
 ; Built-in function calls
