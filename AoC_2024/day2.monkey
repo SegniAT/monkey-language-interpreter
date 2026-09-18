@@ -20,7 +20,7 @@ let prep = fn(i) {
 
 let res = prep(0)
 
-let colOne = sortInts(res["colOne"]);
+let colOne = res["colOne"];
 let colTwo = sortInts(res["colTwo"]);
 
 let countNumInArray = fn(num, arr, i) {
