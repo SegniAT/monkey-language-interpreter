@@ -25,6 +25,7 @@ var builtinDocs = map[string]string{
 	"atoi":        "Parses a string into an integer.\n\n**Returns:** `INTEGER`\n\n**Example:**\n```monkey\natoi(\"42\");\n```",
 	"sortInts":    "Sorts an array of integers in ascending order and returns a new array.\n\n**Returns:** `ARRAY` of `INTEGER`\n\n**Example:**\n```monkey\nsortInts([3, 1, 2]);\n```",
 	"trimSpace":   "Removes leading and trailing whitespace from a string.\n\n**Returns:** `STRING`\n\n**Example:**\n```monkey\ntrimSpace(\"  hello  \"); // \"hello\"\n```",
+	"trimSuffix":  "Removes suffix provided from a string.\n\n**Returns:** `STRING`\n\n**Example:**\n```monkey\ntrimSuffix(\"  hello  \",,\"o\"); // \"hell\"\n```",
 }
 
 type Document struct {

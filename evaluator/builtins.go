@@ -248,6 +248,29 @@ var builtins = map[string]*object.Builtin{
 			return &object.String{Value: strings.TrimSpace(str.Value)}
 		},
 	},
+	"trimSuffix": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 2 {
+				return newError("wrong number of arguments. got=%d, want=2", len(args))
+			}
+
+			if args[0].Type() != object.STRING_OBJ || args[1].Type() != object.STRING_OBJ {
+				return newError("argument to `trimSuffix` must be (STRING, STRING), got (%s, %s)", args[0].Type(), args[1].Type())
+			}
+
+			str, ok := args[0].(*object.String)
+			if !ok {
+				return newError("first argument to `trimSuffix` must be (STRING, STRING), got %s", args[0].Type())
+			}
+
+			suffix, ok := args[1].(*object.String)
+			if !ok {
+				return newError("second argument to `trimSuffix` must be STRING, got %s", args[1].Type())
+			}
+
+			return &object.String{Value: strings.TrimSuffix(str.Value, suffix.Value)}
+		},
+	},
 }
 
 func BuiltinNames() []string {
