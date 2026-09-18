@@ -23,16 +23,30 @@ let res = prep(0)
 let colOne = sortInts(res["colOne"]);
 let colTwo = sortInts(res["colTwo"]);
 
-let dayOne = fn(i, j){
-	if (i==len(lines)) {
-		return 0
+let countNumInArray = fn(num, arr, i) {
+	if (i == len(arr)){
+		return 0;
 	}
 
-	let sum = dayOne(i+1, j+1);
+	if (num < arr[i]){
+		return 0;
+	}
 
-	let diff = colOne[i] - colTwo[j];
-	return sum + if(diff<0){ -1*diff }else{ diff };
+	let res = countNumInArray(num, arr, i+1);
+	return if (num == arr[i]){ res + 1 } else { res };
 }
 
-puts(dayOne(0, 0))
+let dayTwo = fn(i){
+	if (i == len(colOne)){
+		return 0;
+	}
 
+	let sol = dayTwo(i+1);
+	
+	let num = colOne[i]
+	let numCount = countNumInArray(num, colTwo, 0);
+
+	return sol + (num * numCount);
+}
+
+puts(dayTwo(0))

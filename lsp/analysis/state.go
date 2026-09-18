@@ -186,6 +186,10 @@ func (s *State) Definition(uri string, line, character uint) *Location {
 		return nil
 	}
 
+	if symbol.Type == builtin {
+		return nil
+	}
+
 	return &Location{
 		URI:   uri,
 		Range: symbol.Range,
