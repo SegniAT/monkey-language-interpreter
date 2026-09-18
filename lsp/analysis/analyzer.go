@@ -23,7 +23,7 @@ func (d *Document) analyze() []token.Diagnostic {
 }
 
 func (d *Document) visit(node ast.Node, scope *symbolTable, diags *[]token.Diagnostic) {
-	if node == nil {
+	if isNilNode(node) {
 		return
 	}
 

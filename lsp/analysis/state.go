@@ -3,6 +3,7 @@ package analysis
 import (
 	"fmt"
 	"log/slog"
+	"reflect"
 	"strings"
 	"sync"
 	"unicode/utf8"
@@ -25,7 +26,7 @@ var builtinDocs = map[string]string{
 	"atoi":        "Parses a string into an integer.\n\n**Returns:** `INTEGER`\n\n**Example:**\n```monkey\natoi(\"42\");\n```",
 	"sortInts":    "Sorts an array of integers in ascending order and returns a new array.\n\n**Returns:** `ARRAY` of `INTEGER`\n\n**Example:**\n```monkey\nsortInts([3, 1, 2]);\n```",
 	"trimSpace":   "Removes leading and trailing whitespace from a string.\n\n**Returns:** `STRING`\n\n**Example:**\n```monkey\ntrimSpace(\"  hello  \"); // \"hello\"\n```",
-	"trimSuffix":  "Removes suffix provided from a string.\n\n**Returns:** `STRING`\n\n**Example:**\n```monkey\ntrimSuffix(\"  hello  \",,\"o\"); // \"hell\"\n```",
+	"trimSuffix":  "Removes suffix provided from a string.\n\n**Returns:** `STRING`\n\n**Example:**\n```monkey\ntrimSuffix(\"hello world\", \"world\"); // \"hello \"\n```",
 }
 
 type Document struct {
@@ -308,9 +309,26 @@ func nodeEncloses(outer, inner ast.Node) bool {
 	return true
 }
 
+// isNilNode reports whether node is unset, including the "typed nil" case
+// where an interface wraps a nil pointer (e.g. a nil *ast.BlockStatement).
+// A plain node == nil check cannot catch typed nils, and dereferencing one
+// panics, so every walker must use this guard.
+func isNilNode(node ast.Node) bool {
+	if node == nil {
+		return true
+	}
+
+	v := reflect.ValueOf(node)
+	switch v.Kind() {
+	case reflect.Pointer, reflect.Interface, reflect.Slice, reflect.Map:
+		return v.IsNil()
+	}
+	return false
+}
+
 // positionIsInRange helps us figure out if a position is in a node.
 func positionIsInRange(node ast.Node, line, character uint) bool {
-	if node == nil {
+	if isNilNode(node) {
 		return false
 	}
 
@@ -337,7 +355,7 @@ FindASTNode finds AST node at given line and character, if one exists.
 It returns either of these leaf nodes or nil: *ast.Identifier, *ast.IntegerLiteral, *ast.Boolean or *ast.StringLiteral
 */
 func FindASTNode(node ast.Node, line, character uint) ast.Node {
-	if node == nil {
+	if isNilNode(node) {
 		return nil
 	}
 
@@ -388,7 +406,11 @@ func FindASTNode(node ast.Node, line, character uint) ast.Node {
 		if n := FindASTNode(node.Consequence, line, character); n != nil {
 			return n
 		}
-		return FindASTNode(node.Alternative, line, character)
+		if node.Alternative != nil {
+			return FindASTNode(node.Alternative, line, character)
+		}
+
+		return nil
 
 	case *ast.PrefixExpression:
 		return FindASTNode(node.Right, line, character)

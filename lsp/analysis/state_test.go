@@ -170,6 +170,72 @@ if(adder(10)==10){
 	}
 }
 
+func TestFindASTNodePanic(t *testing.T) {
+	content := `fn(){if(true){}}`
+	doc := documentHelper(t, content)
+
+	tests := map[string]struct {
+		line                uint
+		character           uint
+		nodeExists          bool
+		expectedRange       token.Range
+		expectedStringValue string
+	}{
+		"if keyword (no else)": {
+			line:       1,
+			character:  6,
+			nodeExists: false,
+		},
+		"true condition": {
+			line:       1,
+			character:  9,
+			nodeExists: true,
+			expectedRange: token.Range{
+				Start: token.Position{Line: 1, Character: 9},
+				End:   token.Position{Line: 1, Character: 12},
+			},
+			expectedStringValue: "true",
+		},
+		"closing brace of empty consequence": {
+			line:       1,
+			character:  15,
+			nodeExists: false,
+		},
+		"closing brace of fn body": {
+			line:       1,
+			character:  16,
+			nodeExists: false,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			node := analysis.FindASTNode(doc.AST, test.line, test.character)
+
+			if node == nil && test.nodeExists {
+				t.Fatal("Node expected to be found, but not found")
+			}
+
+			if node != nil && !test.nodeExists {
+				t.Fatal("Node expected to not be found, but found")
+			}
+
+			if !test.nodeExists {
+				return
+			}
+
+			if node.TokenLiteral() != test.expectedStringValue {
+				t.Fatalf("Expected value %s, got %s", test.expectedStringValue, node.String())
+			}
+
+			gotRange := token.Range{Start: node.Start(), End: node.End()}
+			if gotRange != test.expectedRange {
+				t.Errorf("Expected range %v, got %v", test.expectedRange, gotRange)
+			}
+		})
+	}
+}
+
 func TestHover(t *testing.T) {
 	content := `let num = 42;
 let myFunc = fn(param) {
