@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/mascot.png" alt="Monkey language mascot" width="240">
+  <img src="assets/mascot.png" alt="Monkey language mascot, Punch, the sensetive young monkey." width="240">
 </p>
 
 <h1 align="center">Monkey Programming Language</h1>
