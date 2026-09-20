@@ -21,4 +21,4 @@ puts(aliceName);
 puts(len(doubled));
 
 let MAX = fn(_, f) { f(_); };
-let config = {foo: 1, "bar": 2};
+let config = {"foo": 1, "bar": 2};
