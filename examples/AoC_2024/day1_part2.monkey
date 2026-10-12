@@ -1,5 +1,5 @@
-let content = trimSuffix(readFile("input.txt"), "\n")
-let lines = splitString(content, "\n")
+let content = trimSuffix(readFile("input.txt"), "\n");
+let lines = splitString(content, "\n");
 
 let prep = fn(i) {
 	if (i==len(lines)){
@@ -18,7 +18,7 @@ let prep = fn(i) {
 	};
 }
 
-let res = prep(0)
+let res = prep(0);
 
 let colOne = res["colOne"];
 let colTwo = sortInts(res["colTwo"]);
@@ -36,17 +36,17 @@ let countNumInArray = fn(num, arr, i) {
 	return if (num == arr[i]){ res + 1 } else { res };
 }
 
-let dayTwo = fn(i){
+let partTwo = fn(i){
 	if (i == len(colOne)){
 		return 0;
 	}
 
-	let sol = dayTwo(i+1);
+	let sol = partTwo(i+1);
 	
-	let num = colOne[i]
+	let num = colOne[i];
 	let numCount = countNumInArray(num, colTwo, 0);
 
 	return sol + (num * numCount);
 }
 
-puts(dayTwo(0))
+partTwo(0);

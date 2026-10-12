@@ -1,5 +1,5 @@
-let content = trimSuffix(readFile("input.txt"), "\n")
-let lines = splitString(content, "\n")
+let content = trimSuffix(readFile("input.txt"), "\n");
+let lines = splitString(content, "\n");
 
 let prep = fn(i) {
 	if (i==len(lines)){
@@ -18,21 +18,21 @@ let prep = fn(i) {
 	};
 }
 
-let res = prep(0)
+let res = prep(0);
 
 let colOne = sortInts(res["colOne"]);
 let colTwo = sortInts(res["colTwo"]);
 
-let dayOne = fn(i, j){
+let partOne = fn(i, j){
 	if (i==len(lines)) {
-		return 0
+		return 0;
 	}
 
-	let sum = dayOne(i+1, j+1);
+	let sum = partOne(i+1, j+1);
 
 	let diff = colOne[i] - colTwo[j];
 	return sum + if(diff<0){ -1*diff }else{ diff };
 }
 
-puts(dayOne(0, 0))
+partOne(0, 0);
 

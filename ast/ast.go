@@ -220,7 +220,7 @@ type IfExpression struct {
 func (ie *IfExpression) Start() token.Position { return ie.Token.Range.Start }
 func (ie *IfExpression) End() token.Position {
 	if ie.Alternative != nil {
-		return ie.Alternative.StartToken.Range.End
+		return ie.Alternative.EndToken.Range.End
 	}
 	return ie.Consequence.EndToken.Range.End
 }

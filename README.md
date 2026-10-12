@@ -246,6 +246,31 @@ change simply run `:edit`. After a **grammar** change, reinstall the parser.
 Both solve the problem recursively (Monkey has no loops) using the string and
 array built-ins: `readFile`, `trimSuffix`, `splitString`, `atoi`, `sortInts`,
 `len`, `push`, and `first`/`rest`, plus integer indexing like `list[i]`.
+A Go port of the same solutions lives in [`examples/AoC_2024/go_soln/`](examples/AoC_2024/go_soln/)
+with a small runner at [`examples/AoC_2024/cmd/soln/`](examples/AoC_2024/cmd/soln/).
+
+### Benchmarks
+
+[`examples/AoC_2024/benchmark/`](examples/AoC_2024/benchmark/) compares the two
+implementations for both days (one benchmark each — `BenchmarkMonkeyDay1`,
+`BenchmarkMonkeyDay2`, `BenchmarkGoDay1`, `BenchmarkGoDay2`). Run them from
+anywhere in the repo:
+
+```bash
+go test -bench=. -run='^$' ./examples/AoC_2024/benchmark
+```
+
+Add `-benchmem` to also report bytes/allocs per operation. CPU and heap
+profiling work out of the box — Monkey runs in-process, so its profiles break
+down into the interpreter's own lexer/parser/evaluator functions:
+
+```bash
+go test -bench=. -run='^$' -cpuprofile /tmp/cpu.out ./examples/AoC_2024/benchmark
+go tool pprof -top /tmp/cpu.out
+
+go test -bench=. -run='^$' -memprofile /tmp/mem.out ./examples/AoC_2024/benchmark
+go tool pprof -alloc_space /tmp/mem.out
+```
 
 ## Testing
 

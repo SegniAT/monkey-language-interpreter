@@ -1,2 +1,5 @@
 test.monkey
 /bin
+benchmark.test
+examples/AoC_2024/benchmark/*.test
+examples/AoC_2024/benchmark/*.out
